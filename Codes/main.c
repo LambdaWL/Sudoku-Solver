@@ -22,7 +22,7 @@ bool main_game_loop(int *board, bool *initial) {
     printf(" (hint x y): display all available numbers at (x,y)  \n");
     printf("       (fill x y k): fill in value k at (x,y)        \n");
     printf("       (save): save the current Sudoku puzzle        \n");
-	printf("  (restore): return the board to initial condition   \n");
+    printf("  (restore): return the board to initial condition   \n");
     printf("-----------------------------------------------------\n");
     if (scanf("%s", command) != 1) {
       fprintf(stderr, "Command Reading Failed! Exiting...\n");
@@ -31,7 +31,8 @@ bool main_game_loop(int *board, bool *initial) {
     if (strcmp(command, "hint") == 0) {
       int x;
       int y;
-      if (!(scanf("%d", &x) == 1) || !(scanf("%d", &y) == 1)) {
+      if (!(scanf("%d", &x) == 1) || !(scanf("%d", &y) == 1) ||
+	  x > 9 || x < 1 || y > 9 || y < 1) {
         printf("Invalid arguments provided. Please try again.\n");
         continue;
       }
@@ -41,7 +42,8 @@ bool main_game_loop(int *board, bool *initial) {
       int y;
       int k;
       if (!(scanf("%d", &x) == 1) || !(scanf("%d", &y) == 1) ||
-          !(scanf("%d", &k) == 1)) {
+          !(scanf("%d", &k) == 1) || x > 9 || x < 1 || y > 9 || 
+	  y < 1 || k > 9 || k < 1) {
         printf("Invalid arguments provided. Please try again.\n");
         continue;
       }
@@ -61,12 +63,13 @@ bool main_game_loop(int *board, bool *initial) {
     } else if (strcmp(command, "restore") == 0) {
 		board_restore(board, initial);
 		board_print(board, initial);
-	} else {
+    } else {
       printf("Invalid command provided. Please try again.\n");
     }  
   }
   return true;
 }
+
 
 int main(void) {
   printf("---------- Welcome to Sudoku Solver (v1.0) ----------\n");
@@ -98,10 +101,11 @@ int main(void) {
   } else if (strcmp(command, "load") == 0) {
     print_files();
     printf("Please enter the name of the file you want to load, ");
-    printf("make sure that it is less than 10 characters:\n");
-	char path[30] = "./Save/";
+    printf("make sure that it is less than 10 characters.\n");
+    printf("Note: If the input name is invalid, please keep trying:\n");
+    char path[30] = "./Save/";
     char name[11];
-	char temp[50];
+    char temp[50];
     FILE *fp = NULL;
     do {
       if (scanf("%s", name) != 1) {
@@ -109,8 +113,8 @@ int main(void) {
         fprintf(stderr, "Exiting...");
         exit(EXIT_FAILURE);
       }
-	  strcpy(temp, path);
-	  strcat(temp, name);
+      strcpy(temp, path);
+      strcat(temp, name);
       fp = fopen(temp, "r");
     } while (fp == NULL);
     int *new_board = board_load(fp);
